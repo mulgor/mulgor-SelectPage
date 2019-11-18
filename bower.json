@@ -1,0 +1,32 @@
+{
+  "name": "mulgor-selectpage",
+  "description": "A simple style and powerful selection jQuery plugin, edit by https://github.com/TerryZ/SelectPage",
+  "main": "selectpage.js",
+  "authors": [
+    "Mulgor"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "select",
+    "pagination",
+    "tags",
+    "remote-data",
+    "autocomplete",
+    "keyboard-navigation",
+    "i18n",
+    "jquery-plugin",
+    "ui",
+    "jquery",
+    "form",
+    "input",
+    "ajax"
+  ],
+  "homepage": "https://github.com/mulgor/mulgor-SelectPage",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
