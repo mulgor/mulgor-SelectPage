@@ -2,6 +2,7 @@
   "name": "mulgor-selectpage",
   "description": "A simple style and powerful selection jQuery plugin, edit by https://github.com/TerryZ/SelectPage",
   "main": "selectpage.js",
+  "version": "1.0.0",
   "authors": [
     "Mulgor"
   ],
