@@ -211,6 +211,13 @@
 	 * @param {Object} option
 	 */
 	var SelectPage = function(input, option) {
+		//特殊字段处理
+        $.each({data: 'source', keyField: 'primaryKey', showField: 'field', pageSize: 'perPage'}, function (i, j) {
+            if (typeof option[j] !== 'undefined') {
+                option[i] = option[j];
+                delete option[j];
+            }
+        });
 		this.setOption(option);
 		this.setLanguage();
 		this.setCssClass();
@@ -2139,7 +2146,10 @@
 			var $this = $(this),
 				data = $this.data(SelectPage.dataKey),
 				params = $.extend({}, defaults, $this.data(), data && data.option ,typeof option === 'object' && option);
-			if(!data) $this.data(SelectPage.dataKey,(data =  new SelectPage(this,params)));
+			if(!data) {
+				$this.data(SelectPage.dataKey,(data =  new SelectPage(this,params)));
+				$this.trigger('ready.selectpage');
+			}
 		});
 	}
 
