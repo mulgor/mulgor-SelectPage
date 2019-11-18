@@ -51,7 +51,7 @@
          * @type number
          * @default 10
          */
-        listSize : 10,
+        listSize: 10,
 		/**
 		 * Show control bar in multiple select mode
 		 * @type boolean
@@ -96,7 +96,7 @@
          * Actually used to search field
 		 * @type string
 		 */
-		searchField : undefined,
+		searchField: undefined,
 		/**
 		 * Search type ('AND' or 'OR')
 		 * @type string
@@ -122,14 +122,14 @@
 		 * @return object
 		 * @example params : function(){return {'name':'aa','sex':1};}
 		 */
-		params : undefined,
+		params: undefined,
 		/**
          * Custom result list item show text
 		 * @type function
 		 * @param data {object} row data
 		 * @return string
 		 */
-		formatItem : undefined,
+		formatItem: undefined,
         /**
          * Have some highlight item and lost focus, auto select the highlight item
          * @type boolean
@@ -169,12 +169,12 @@
 		 * @param object - selected item json data
 		 * @param self   - plugin object
 		 */
-		eSelect : undefined,
+		eSelect: undefined,
         /**
          * Before result list show up callback, you can do anything prepared
          * @param self - plugin object
          */
-        eOpen : undefined,
+        eOpen: undefined,
 		/**
          * Server side return data convert callback
 		 * @type function
@@ -187,20 +187,20 @@
 		 *   totalRow : 100
 		 * }
 		 */
-		eAjaxSuccess : undefined,
+		eAjaxSuccess: undefined,
 		/**
          * Close selected item tag callback (multiple mode)
 		 * @type function
 		 * @param removeCount {number} remove item count
          * @param self {object} plugin object
 		 */
-		eTagRemove : undefined,
+		eTagRemove: undefined,
         /**
          * Clear selected item callback(single select mode)
          * @type function
          * @param self {object} plugin object
          */
-        eClear : undefined
+        eClear: undefined
 	};
 
 
@@ -255,7 +255,7 @@
 		for (var i = 0; i < arr.length; i++) {
 			option[arr[i]] = this.strToArray(option[arr[i]]);
 		}
-
+		//mulgor--
 		//set multiple order field
 		//example:  [ ['id ASC'], ['name DESC'] ]
 		if(option.orderBy !== false) option.orderBy = this.setOrderbyOption(option.orderBy, option.showField);
@@ -530,8 +530,8 @@
 			btn_on: 'sp_btn_on',
 			btn_out: 'sp_btn_out',
 			input: 'sp_input',
-            clear_btn : 'sp_clear_btn',
-            align_right : 'sp_align_right'
+            clear_btn: 'sp_clear_btn',
+            align_right: 'sp_align_right'
 		};
 		this.css_class = css_class;
 	};
@@ -542,7 +542,7 @@
 	SelectPage.prototype.setProp = function() {
 		this.prop = {
             //input disabled status
-            disabled : false,
+            disabled: false,
 			current_page: 1,
 			//total page
 			max_page: 1,
@@ -554,15 +554,15 @@
 			//last selected item value
 			prev_value: '',
             //last selected item text
-            selected_text : '',
+            selected_text: '',
 			last_input_time: undefined,
             init_set: false
 		};
 		this.template = {
 			tag: {
-				content : '<li class="selected_tag" itemvalue="#item_value#">#item_text#<span class="tag_close"><i class="sp-iconfont if-close"></i></span></li>',
-				textKey : '#item_text#',
-				valueKey : '#item_value#'
+				content: '<li class="selected_tag" itemvalue="#item_value#">#item_text#<span class="tag_close"><i class="sp-iconfont if-close"></i></span></li>',
+				textKey: '#item_text#',
+				valueKey: '#item_value#'
 			},
             page: {
                 current: 'page_num',
@@ -588,23 +588,23 @@
             includeMargin : false,
             display        : 'block'
         };
-        var configs = defaults, $target = element.eq( 0 ),fix, restore,tmp = [], style = '', $hidden;
+        var configs = defaults, $target = element.eq(0), fix, restore, tmp = [], style = '', $hidden;
 
-        fix = function (){
+        fix = function(){
             // get all hidden parents
-            $hidden = $target.parents().addBack().filter( ':hidden' );
-            style   += 'visibility: hidden !important; display: ' + configs.display + ' !important; ';
+            $hidden = $target.parents().addBack().filter(':hidden');
+            style += 'visibility: hidden !important; display: ' + configs.display + ' !important; ';
 
-            if( configs.absolute === true ) style += 'position: absolute !important;';
+            if(configs.absolute === true) style += 'position: absolute !important;';
 
             // save the origin style props
             // set the hidden el css to be got the actual value later
             $hidden.each( function (){
                 // Save original style. If no style was set, attr() returns undefined
-                var $this = $( this ), thisStyle = $this.attr( 'style' );
-                tmp.push( thisStyle );
+                var $this = $(this), thisStyle = $this.attr('style');
+                tmp.push(thisStyle);
                 // Retain as much of the original style as possible, if there is one
-                $this.attr( 'style', thisStyle ? thisStyle + ';' + style : style );
+                $this.attr('style', thisStyle ? thisStyle + ';' + style : style);
             });
         };
 
@@ -774,15 +774,38 @@
 				if(!p.multiple && data.length > 1) data = [data[0]];
 				self.afterInit(self, data);
 			} else {//ajax data source mode to init selected item
+				//---mulgor
+				var _paramsFunc = p.params, _params = {}, searchKey = p.searchField;
+                var _orgParams = {
+                    searchTable: p.dbTable,
+                    searchKey: p.keyField,
+                    searchValue: key,
+                    orderBy: p.orderBy,
+                    showField: p.showField,
+                    keyField: p.keyField,
+                    keyValue: key,
+                    searchField: p.searchField
+                };
+                if (_paramsFunc) {
+                    var result = $.isFunction(_paramsFunc) ? _paramsFunc(self) : _paramsFunc;
+                    if (result && $.isPlainObject(result)) {
+                        _params = $.extend({}, _orgParams, result);
+                    } else {
+                        _params = _orgParams;
+                    }
+                } else {
+                    _params = _orgParams;
+                }
 				$.ajax({
 					dataType: 'json',
                     type: 'POST',
 					url: p.data,
-					data: {
-						searchTable: p.dbTable,
-						searchKey: p.keyField,
-						searchValue: key
-					},
+					// data: {
+					// 	searchTable: p.dbTable,
+					// 	searchKey: p.keyField,
+					// 	searchValue: key
+					// },
+					data: _params,  //---mulgor
 					success: function(json) {
                         var d = null;
                         if(p.eAjaxSuccess && $.isFunction(p.eAjaxSuccess)) d = p.eAjaxSuccess(json);
@@ -1302,7 +1325,11 @@
 			pageNumber: which_page_num,
 			pageSize: p.pageSize,
 			andOr: p.andOr,
-			searchTable: p.dbTable
+			orderBy: p.orderBy,  //---mulgor
+            searchTable: p.dbTable,
+            showField: self.option.showField,
+            keyField: self.option.keyField,
+            searchField: self.option.searchField
 		};
 		if(p.orderBy !== false) _orgParams.orderBy = p.orderBy;
         _orgParams[searchKey] = q_word[0];
