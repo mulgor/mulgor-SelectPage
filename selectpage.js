@@ -999,7 +999,16 @@
                     }
                     d.hideResults(d);
                 }
-            });
+			});
+			
+			// 对所有外部点击，触发blur.SelectPage事件
+			$('div.' + css.container).each(function(){
+				if(this == sp[0]) return;
+				var $this = $(this), d = $this.find('input.' + css.input).data(SelectPage.dataKey);
+
+				d.hideResults(d);
+				d.elem.hidden.trigger('blur.SelectPage');
+			});
 		});
 	};
 
