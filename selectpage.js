@@ -211,7 +211,7 @@
 	 * @param {Object} option
 	 */
 	var SelectPage = function(input, option) {
-		//特殊字段处理
+		//特殊字段处理,适配fastadmin    by fastadmin
         $.each({data: 'source', keyField: 'primaryKey', showField: 'field', pageSize: 'perPage'}, function (i, j) {
             if (typeof option[j] !== 'undefined') {
                 option[i] = option[j];
@@ -255,10 +255,11 @@
 		for (var i = 0; i < arr.length; i++) {
 			option[arr[i]] = this.strToArray(option[arr[i]]);
 		}
-		//mulgor--
+		//mulgor--如果orderBy为false，需要设置一个默认的排序字段(fastadmin需要)
+		option.orderBy = option.orderBy || option.showField;
 		//set multiple order field
 		//example:  [ ['id ASC'], ['name DESC'] ]
-		if(option.orderBy !== false) option.orderBy = this.setOrderbyOption(option.orderBy, option.showField);
+		if(option.orderBy !== false) option.orderBy = this.setOrderbyOption(option.orderBy, option.showField); 
         //close auto fill result and auto select first in multiple mode and select item not close list
 		if(option.multiple && !option.selectToCloseList){
 			option.autoFillResult = false;
@@ -774,7 +775,7 @@
 				if(!p.multiple && data.length > 1) data = [data[0]];
 				self.afterInit(self, data);
 			} else {//ajax data source mode to init selected item
-				//---mulgor
+				//---mulgor 适配fastadmin
 				var _paramsFunc = p.params, _params = {}, searchKey = p.searchField;
                 var _orgParams = {
                     searchTable: p.dbTable,
@@ -805,7 +806,7 @@
 					// 	searchKey: p.keyField,
 					// 	searchValue: key
 					// },
-					data: _params,  //---mulgor
+					data: _params,  //---mulgor 适配fastadmin
 					success: function(json) {
                         var d = null;
                         if(p.eAjaxSuccess && $.isFunction(p.eAjaxSuccess)) d = p.eAjaxSuccess(json);
@@ -1325,20 +1326,32 @@
 			pageNumber: which_page_num,
 			pageSize: p.pageSize,
 			andOr: p.andOr,
-			orderBy: p.orderBy,  //---mulgor
+			orderBy: p.orderBy,  //---mulgor 适配fastadmin
             searchTable: p.dbTable,
             showField: self.option.showField,
             keyField: self.option.keyField,
             searchField: self.option.searchField
 		};
 		if(p.orderBy !== false) _orgParams.orderBy = p.orderBy;
-        _orgParams[searchKey] = q_word[0];
-		if (_paramsFunc && $.isFunction(_paramsFunc)) {
-			var result = _paramsFunc.call(self);
-			if (result && $.isPlainObject(result)) {
-				_params = $.extend({}, _orgParams, result);
-			} else _params = _orgParams;
-		} else _params = _orgParams;
+		_orgParams[searchKey] = q_word[0];
+		//mulgor 适配fastadmin
+		if (_paramsFunc) {
+            var result = $.isFunction(_paramsFunc) ? _paramsFunc.call(self) : _paramsFunc;
+            if (result && $.isPlainObject(result)) {
+                _params = $.extend({}, _orgParams, result);
+            } else {
+                _params = _orgParams;
+            }
+        } else {
+            _params = _orgParams;
+		}
+		
+		// if (_paramsFunc && $.isFunction(_paramsFunc)) {
+		// 	var result = _paramsFunc.call(self);
+		// 	if (result && $.isPlainObject(result)) {
+		// 		_params = $.extend({}, _orgParams, result);
+		// 	} else _params = _orgParams;
+		// } else _params = _orgParams;
 		self.prop.xhr = $.ajax({
 			dataType: 'json',
 			url: p.data,
