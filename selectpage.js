@@ -808,7 +808,7 @@
 					// },
 					data: _params,  //---mulgor 适配fastadmin
 					success: function(json) {
-                        var d = null;
+                        var d = json; // d应该默认为json，否则eAjaxSuccess不存在的情况下程序会出错
                         if(p.eAjaxSuccess && $.isFunction(p.eAjaxSuccess)) d = p.eAjaxSuccess(json);
                         self.afterInit(self, d.list);
 					},
@@ -1374,7 +1374,8 @@
 				}
 				var data = {}, json = {};
 				try{
-                    data = p.eAjaxSuccess(returnData);
+                    data = returnData; // data应该默认为returnData，否则eAjaxSuccess不存在的情况下程序会出错
+					if(p.eAjaxSuccess && $.isFunction(p.eAjaxSuccess)) data = p.eAjaxSuccess(returnData);
                     json.originalResult = data.list;
                     json.cnt_whole = data.totalRow;
                 }catch(e){
