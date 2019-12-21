@@ -849,7 +849,8 @@
 			});
 			self.tagValuesSet(self);
 			self.inputResize(self);
-            self.prop.init_set = false;
+			self.prop.init_set = false;
+			self.elem.combo_input.trigger('inited.selectpage', data);
 		}else{
 			var row = data[0];
 			self.elem.combo_input.val(getText(row));
@@ -860,6 +861,7 @@
 				self.elem.combo_input.attr('title', self.message.select_ok).removeClass(css.select_ng).addClass(css.select_ok);
 			}
 			self.putClearButton();
+			self.elem.combo_input.trigger('inited.selectpage', row);
 		}
 	};
 
