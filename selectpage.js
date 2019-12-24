@@ -639,7 +639,7 @@
 	SelectPage.prototype.setElem = function(combo_input) {
 		// 1. build Dom object
 		var elem = {}, p = this.option, css = this.css_class, msg = this.message, input = $(combo_input);
-		var orgWidth = input.outerWidth();
+		var orgWidth = input.attr('width') ? input.attr('width') : input.outerWidth();
 		// fix input width in hidden situation
 		if(orgWidth <= 0) orgWidth = this.elementRealSize(input, 'outerWidth');
 		if(orgWidth < 150) orgWidth = 150;
